@@ -12,7 +12,7 @@ def sha3(data):
 
 # Simulate a similar version of swift
 
-def swifft_placeholder(data):
+def swifft_mock(data):
     mixed = 0
     for i, c in enumerate(data.encode()):
         mixed += (c * (i + 1)) % 251
@@ -20,13 +20,13 @@ def swifft_placeholder(data):
 
 
 # Set dictionary of all hash functions
-hash_functions = [sha256, sha3, swifft_placeholder]
+hash_functions = [sha256, sha3, swifft_mock]
 
 
 quantum_exponents = {
     sha256: 0.5, # Grover's algorithm is faster by O(N^0.5) compared to Classical (O(N))
     sha3: 0.9, # O(N^0.9) versus (O(N)), very quantum resistent
-    swifft_placeholder: 1.0 # O(N) versus O(N), extremely quantum resistent 
+    swifft_mock: 1.0 # O(N) versus O(N), extremely quantum resistent 
 }
 
 def hash_meets_difficulty(hex_hash, difficulty_bits):
@@ -65,22 +65,22 @@ def quantum_multi_hash_estimate(classical_nonce, selected_funcs):
     return int(classical_nonce ** avg_exp)
 
 def run_simulation(difficulty):
-    print(f"\n=== Simulation at Difficulty {difficulty} ===")
+    print(f"\nSimulation at Difficulty {difficulty}")
 
     # SHA-256 Only
     c_nonce_sha, c_time_sha = classical_sha256_mining("blockdata", difficulty)
     q_nonce_sha = quantum_sha256_estimate(c_nonce_sha)
-    print("\n--- SHA-256 Only ---")
+    print("\nSHA-256 Only")
     print(f"Classical: nonce = {c_nonce_sha}, time = {c_time_sha:.2f}s")
     print(f"Quantum Estimate: {q_nonce_sha}, speedup = {c_nonce_sha / q_nonce_sha:.2f}x")
 
     # Multi-Hash (2-of-3)
     c_nonce_multi, c_time_multi, selected = classical_multi_hash_mining("blockdata", difficulty)
     q_nonce_multi = quantum_multi_hash_estimate(c_nonce_multi, selected)
-    print("\n--- Multi-Hash (2-of-3) ---")
+    print("\nMulti-Hash (2-of-3)")
     print(f"Classical: nonce = {c_nonce_multi}, time = {c_time_multi:.2f}s")
     print(f"Hashes Used: {[f.__name__ for f in selected]}")
     print(f"Quantum Estimate: {q_nonce_multi}, speedup = {c_nonce_multi / q_nonce_multi:.2f}x")
 
-# Run for difficulty 10
-run_simulation(11)
+# Should be adjusted from 1-10, anything higher is harder on computer
+run_simulation(1)
